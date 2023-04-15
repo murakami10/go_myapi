@@ -1,22 +1,24 @@
 package main
 
 import (
+	"github.com/labstack/echo/v4"
 	"github.com/murakami10/myapi/handlers"
 	"log"
-	"net/http"
 )
 
 func main(){
 
-	http.HandleFunc("/hello", handlers.HelloHandler)
-	http.HandleFunc("/article", handlers.PostArticleHandler)
-	http.HandleFunc("/article/list", handlers.ArticleListHandler)
-	http.HandleFunc("/article/1", handlers.ArticleDetailHandler)
-	http.HandleFunc("/article/nice", handlers.PostNiceHandler)
-	http.HandleFunc("/comment", handlers.PostCommentHandler)
+	e := echo.New()
+
+	e.GET("/hello", handlers.HelloHandler)
+	e.GET("/article/list", handlers.ArticleListHandler)
+	e.POST("/article", handlers.PostArticleHandler)
+	e.GET("/article/:id", handlers.ArticleDetailHandler)
+	e.POST("/article/nice", handlers.PostNiceHandler)
+	e.POST("/commnet", handlers.PostCommentHandler)
 
 	log.Println("server start at port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	e.Logger.Fatal((e.Start(":8080")))
 }
 
 

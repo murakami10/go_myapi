@@ -2,33 +2,60 @@ package handlers
 
 import (
 	"fmt"
-	"io"
+	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 // /hello のハンドラ
-func HelloHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Hello, world!\n")
+func HelloHandler(c echo.Context) error {
+
+	return c.String(http.StatusOK, "Hello, world")
 }
+
 // /article のハンドラ
-func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Article...\n")
+func PostArticleHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "Posting Article...\n")
 }
+
 // /article/list のハンドラ
-func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Article List\n")
+func ArticleListHandler(c echo.Context) error{
+
+	var page int
+
+	pageParam := c.QueryParam("page")
+	if pageParam == ""{
+		page = 1
+	}else{
+		var err error
+		page, err = strconv.Atoi(c.QueryParam("page"))
+
+		if err != nil {
+			return c.String(http.StatusBadRequest, "Invalid query parameter")
+		}
+	}
+
+	resString := fmt.Sprintf("Article List (page %d)\n", page)
+
+	return c.String(http.StatusOK,resString)
 }
+
 // /article/1 のハンドラ
-func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
-	articleID := 1
-	resString := fmt.Sprintf("Article No.%d\n", articleID)
-	io.WriteString(w, resString)
+func ArticleDetailHandler(c echo.Context) error {
+	articleID, err:= strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid query parameter")
+	}
+	resString := fmt.Sprintf("Article No. %d \n", articleID)
+	return c.String(http.StatusOK, resString)
 }
+
 // /article/nice のハンドラ
-func PostNiceHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Nice...\n")
+func PostNiceHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "Posting Nice...\n")
 }
+
 // /comment のハンドラ
-func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Comment...\n")
+func PostCommentHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "Posting Comment...\n")
 }
