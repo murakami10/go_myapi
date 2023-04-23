@@ -3,30 +3,37 @@ package handlers
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/murakami10/myapi/models"
 	"net/http"
 	"strconv"
 )
 
 // /hello のハンドラ
 func HelloHandler(c echo.Context) error {
-
 	return c.String(http.StatusOK, "Hello, world")
 }
 
 // /article のハンドラ
 func PostArticleHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "Posting Article...\n")
+
+	var article models.Article
+
+	if err := c.Bind(article); err != nil {
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	return c.JSON(http.StatusOK, article)
 }
 
 // /article/list のハンドラ
-func ArticleListHandler(c echo.Context) error{
+func ArticleListHandler(c echo.Context) error {
 
 	var page int
 
 	pageParam := c.QueryParam("page")
-	if pageParam == ""{
+	if pageParam == "" {
 		page = 1
-	}else{
+	} else {
 		var err error
 		page, err = strconv.Atoi(c.QueryParam("page"))
 
@@ -35,19 +42,29 @@ func ArticleListHandler(c echo.Context) error{
 		}
 	}
 
-	resString := fmt.Sprintf("Article List (page %d)\n", page)
+	articleList := []models.Article{models.Article1, models.Article2}
+	if len(articleList) == 0 {
+		errMsg := fmt.Sprintf("fail to fetch articles in page: %d", page)
+		return echo.NewHTTPError(http.StatusBadRequest, errMsg)
+	}
 
-	return c.String(http.StatusOK,resString)
+	return c.JSON(http.StatusOK, articleList)
 }
 
 // /article/1 のハンドラ
 func ArticleDetailHandler(c echo.Context) error {
-	articleID, err:= strconv.Atoi(c.Param("id"))
+	articleID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid query parameter")
 	}
-	resString := fmt.Sprintf("Article No. %d \n", articleID)
-	return c.String(http.StatusOK, resString)
+
+	article := &models.Article1
+	if article == nil {
+		errMsg := fmt.Sprintf("fail to fetch article in article ID: %d", articleID)
+		return echo.NewHTTPError(http.StatusBadRequest, errMsg)
+	}
+
+	return c.JSON(http.StatusOK, *article)
 }
 
 // /article/nice のハンドラ
