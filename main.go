@@ -7,7 +7,6 @@ import (
 )
 
 func main(){
-
 	e := echo.New()
 
 	e.GET("/hello", handlers.HelloHandler)
@@ -15,7 +14,7 @@ func main(){
 	e.POST("/article", handlers.PostArticleHandler)
 	e.GET("/article/:id", handlers.ArticleDetailHandler)
 	e.POST("/article/nice", handlers.PostNiceHandler)
-	e.POST("/commnet", handlers.PostCommentHandler)
+	e.POST("/comment", handlers.PostCommentHandler)
 
 	log.Println("server start at port 8080")
 	e.Logger.Fatal((e.Start(":8080")))

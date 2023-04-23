@@ -15,10 +15,9 @@ func HelloHandler(c echo.Context) error {
 
 // /article のハンドラ
 func PostArticleHandler(c echo.Context) error {
-
 	var article models.Article
 
-	if err := c.Bind(article); err != nil {
+	if err := c.Bind(&article); err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
 	}
 
@@ -69,10 +68,22 @@ func ArticleDetailHandler(c echo.Context) error {
 
 // /article/nice のハンドラ
 func PostNiceHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "Posting Nice...\n")
+	var article models.Article
+
+	if err := c.Bind(&article); err != nil{
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	return c.JSON(http.StatusOK, article)
 }
 
 // /comment のハンドラ
 func PostCommentHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "Posting Comment...\n")
+	var comment models.Comment
+
+	if err := c.Bind(&comment); err != nil{
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	return c.JSON(http.StatusOK, comment)
 }
